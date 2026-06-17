@@ -39,8 +39,6 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
-    ports:
-      - "${API_PORT}:8000"
     networks:
       - backend
     depends_on:
@@ -64,6 +62,20 @@ services:
     depends_on:
       - postgres
       - redis
+
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - backend
+    depends_on:
+      - api
+
 
 volumes:
   postgres_data:
