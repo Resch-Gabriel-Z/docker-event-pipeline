@@ -235,4 +235,4 @@ Use `docker compose down -v` when you want a completely fresh PostgreSQL data di
 - Changing `POSTGRES_USER`, `POSTGRES_PASSWORD`, or `POSTGRES_DB` in `.env` and expecting an existing PostgreSQL volume to reinitialize automatically.
 - Using `docker compose down` when you actually need `docker compose down -v` to reset persistent database state.
 
-Troubleshooting guide: [docs/troubleshooting.md](/home/gabe_desktop/code/docker-event-pipeline/docs/troubleshooting.md)
+Troubleshooting guide: [docs/troubleshooting.md](docs/troubleshooting.md)
