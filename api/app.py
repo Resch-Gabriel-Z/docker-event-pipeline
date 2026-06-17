@@ -3,6 +3,7 @@ import time
 from contextlib import contextmanager
 
 import psycopg
+import redis
 from fastapi import FastAPI
 
 
@@ -18,6 +19,15 @@ def get_database_config() -> dict[str, str]:
         "host": os.environ["POSTGRES_HOST"],
         "port": os.environ["POSTGRES_PORT"],
     }
+
+
+def get_redis_client() -> redis.Redis:
+    """Create a Redis client using environment variables."""
+    return redis.Redis(
+        host=os.environ["REDIS_HOST"],
+        port=int(os.environ["REDIS_PORT"]),
+        decode_responses=True,
+    )
 
 
 @contextmanager
@@ -62,10 +72,27 @@ def wait_for_database(max_attempts: int = 20, delay_seconds: float = 1.0) -> Non
     raise RuntimeError("Database did not become ready in time.")
 
 
+def wait_for_redis(max_attempts: int = 20, delay_seconds: float = 1.0) -> None:
+    """Wait until Redis accepts connections."""
+    client = get_redis_client()
+
+    for attempt in range(1, max_attempts + 1):
+        try:
+            client.ping()
+            print("Redis is ready.")
+            return
+        except Exception as error:
+            print(f"Redis not ready yet. Attempt {attempt}/{max_attempts}. Error: {error}")
+            time.sleep(delay_seconds)
+
+    raise RuntimeError("Redis did not become ready in time.")
+
+
 @app.on_event("startup")
 def startup_event() -> None:
     """Run setup code when the API container starts."""
     wait_for_database()
+    wait_for_redis()
 
 
 @app.get("/health")
@@ -76,7 +103,7 @@ def health() -> dict[str, str]:
 
 @app.post("/click")
 def create_click() -> dict[str, int | str]:
-    """Insert one click event into the database."""
+    """Insert one click event into the database and queue it in Redis."""
     with get_connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
@@ -91,7 +118,10 @@ def create_click() -> dict[str, int | str]:
 
         connection.commit()
 
-    return {"id": click_id, "status": "received"}
+    redis_client = get_redis_client()
+    redis_client.rpush("click_jobs", click_id)
+
+    return {"id": click_id, "status": "received", "queued": "true"}
 
 
 @app.get("/stats")
@@ -109,3 +139,11 @@ def stats() -> dict[str, int]:
             rows = cursor.fetchall()
 
     return {status: count for status, count in rows}
+
+
+@app.get("/queue")
+def queue() -> dict[str, list[str]]:
+    """Return currently queued Redis jobs."""
+    redis_client = get_redis_client()
+    jobs = redis_client.lrange("click_jobs", 0, -1)
+    return {"click_jobs": jobs}
