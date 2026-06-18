@@ -5,6 +5,6 @@ metadata:
 data:
   POSTGRES_HOST: "postgres"
   POSTGRES_PORT: "5432"
-  POSTGRES_DB: "events"
+  POSTGRES_DB: "eventdb"
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"

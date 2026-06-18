@@ -236,3 +236,15 @@ Use `docker compose down -v` when you want a completely fresh PostgreSQL data di
 - Using `docker compose down` when you actually need `docker compose down -v` to reset persistent database state.
 
 Troubleshooting guide: [docs/troubleshooting.md](docs/troubleshooting.md)
+
+## Kubernetes
+
+Kubernetes support is available as a second deployment option. It does not replace the Docker Compose workflow.
+
+The manifests live under `k8s/base` and can be applied with:
+
+```bash
+kubectl apply -k k8s/base
+```
+
+See [docs/kubernetes.md](/home/gabe_desktop/code/docker-event-pipeline/docs/kubernetes.md) for setup, port-forwarding, troubleshooting, and cleanup commands.

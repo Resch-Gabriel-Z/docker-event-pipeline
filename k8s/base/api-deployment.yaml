@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api
+  labels:
+    app: api
 spec:
   replicas: 1
   selector:
@@ -15,8 +17,10 @@ spec:
       containers:
         - name: api
           image: gabrielsstuff/docker-event-api:0.1.0
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
+              name: http
           envFrom:
             - configMapRef:
                 name: app-config

@@ -5,6 +5,8 @@ __pycache__/
 
 # Environment files
 .env
+k8s/base/app-secret.yaml
+k8s/local/app-secret.yaml
 
 # Local editor files
 .vscode/
