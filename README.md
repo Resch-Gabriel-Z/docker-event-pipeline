@@ -247,4 +247,4 @@ The manifests live under `k8s/base` and can be applied with:
 kubectl apply -k k8s/base
 ```
 
-See [docs/kubernetes.md](/home/gabe_desktop/code/docker-event-pipeline/docs/kubernetes.md) for setup, port-forwarding, troubleshooting, and cleanup commands.
+See [docs/kubernetes.md](docs/kubernetes.md) for setup, port-forwarding, troubleshooting, and cleanup commands.
