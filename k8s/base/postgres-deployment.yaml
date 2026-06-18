@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: postgres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: api
+      app: postgres
   template:
     metadata:
       labels:
-        app: api
+        app: postgres
     spec:
       containers:
-        - name: api
-          image: gabrielsstuff/docker-event-api:0.1.0
+        - name: postgres
+          image: postgres:16
           ports:
-            - containerPort: 8000
+            - containerPort: 5432
           envFrom:
             - configMapRef:
                 name: app-config

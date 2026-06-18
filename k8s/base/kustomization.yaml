@@ -1,5 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+namespace: docker-event-pipeline
+
 resources:
   - namespace.yaml
+  - app-configmap.yaml
+  - app-secret.yaml
+  - postgres-deployment.yaml
+  - postgres-service.yaml
+  - redis-deployment.yaml
+  - redis-service.yaml
+  - api-deployment.yaml
+  - api-service.yaml
